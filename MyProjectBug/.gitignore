@@ -13,4 +13,8 @@ media/
 
 # database migrations
 */migrationgs/*.py
-!*migrationgs/__init__.py
+!*migrationgs/__init__.py### Example user template template
+
+*.iml
+out
+gen
