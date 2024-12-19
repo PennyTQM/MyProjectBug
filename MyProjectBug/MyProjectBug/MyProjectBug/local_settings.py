@@ -1,4 +1,4 @@
 
 
 LANGUAGE_CODE = 'zh-hans'
-SMS = 666
+SMS = 888
