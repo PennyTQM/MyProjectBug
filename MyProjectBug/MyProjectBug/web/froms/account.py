@@ -1,23 +1,6 @@
-import time
-
-from django.http import HttpResponse
-from django.shortcuts import render
 from django import forms
-# Create your views here.
-from . import models
-from django.conf import settings
-import random
 
-from django_redis import get_redis_connection
-
-from django.template import RequestContext
-
-def login(request):
-    conn = get_redis_connection(alias="default")
-
-    data = random.randint(1000, 9999)
-
-    return HttpResponse(data)
+from web import models
 
 
 class RgeisterModelForm(forms.ModelForm):
@@ -27,7 +10,7 @@ class RgeisterModelForm(forms.ModelForm):
 
     class Meta:
         model = models.UserInfo
-        fields = ['usr_name', 'use_email', 'telnumber', 'code', 'usr_pwd', 'pwd_again']
+        fields = ['usr_name', 'use_email', 'telnumber', 'usr_pwd', 'pwd_again', 'code']
 
     def __init__(self, *args, **kwargs):
         super(RgeisterModelForm, self).__init__(*args, **kwargs)
@@ -35,8 +18,3 @@ class RgeisterModelForm(forms.ModelForm):
             field.widget.attrs['class'] = 'form-control'
             field.widget.attrs['placeholder'] = f'请输入{field.label}'
 
-
-def register(request):
-
-    form = RgeisterModelForm()
-    return render(request, 'app01/register.html', {'form': form})

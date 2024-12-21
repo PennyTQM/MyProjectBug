@@ -1,20 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+{% extends 'layout/web/basic.html' %}
+{% load static %}
+{% block title%}用户注册{% endblock %}
 
-    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+{% block css%}
+<link rel="stylesheet" href="{% static 'css/web/account.css' %}">
+{% endblock %}
 
-    <style>
-        .account{
-        width: 400px;
-        margin: 0 auto;
-        }
-
-    </style>
-</head>
-<body>
-<div class="account">
+{% block content %}
+<div class="account container">
     <h1 style="text-align: center">注册</h1>
     <form method="post">
         {% csrf_token %}
@@ -24,7 +17,7 @@
                     <label for="{{field.id_for_label}}">{{field.label}}</label>
                     <div class="clearfix">
                         <div class="col-md-6" style="padding-left:0;">{{field}}</div>
-                        <div class="col-md-6" ><input type="button" value="获取验证码" class="btn btn-default"></div>
+                        <div class="col-md-6" ><input type="button" value="点击获取验证码" class="btn btn-default"></div>
                     </div>
                 </div>
             {%else%}
@@ -34,8 +27,13 @@
                 </div>
             {%endif%}
         {%endfor%}
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">注 册</button>
     </form>
 </div>
-</body>
-</html>
+
+{% endblock %}
+
+{% block js%}
+{% endblock %}
+
+
