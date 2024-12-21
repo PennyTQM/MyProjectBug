@@ -8,3 +8,4 @@ urlpatterns = [
     url("register/", views.register)
 
 ]
+app_name = "app01"

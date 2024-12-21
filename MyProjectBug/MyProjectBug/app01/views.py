@@ -1,15 +1,24 @@
+import time
+
 from django.http import HttpResponse
 from django.shortcuts import render
 from django import forms
 # Create your views here.
 from . import models
+from django.conf import settings
+
+import random
+
+from django_redis import get_redis_connection
+from django.core.cache import cache
 
 
 def login(request):
-    if request.method == 'GET':
-        return render(request, 'app01/login.html')
-    else:
-        return render(request, 'app01/login.html')
+    conn = get_redis_connection(alias="default")
+
+    data = random.randint(1000, 9999)
+
+    return HttpResponse(data)
 
 
 class RgeisterModelForm(forms.ModelForm):
