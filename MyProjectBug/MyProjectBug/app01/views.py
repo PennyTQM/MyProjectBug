@@ -1,11 +1,8 @@
-import time
-
 from django.http import HttpResponse
 from django.shortcuts import render
 from django import forms
 # Create your views here.
 from . import models
-from django.conf import settings
 import random
 
 from django_redis import get_redis_connection
