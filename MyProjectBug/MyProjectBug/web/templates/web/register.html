@@ -1,39 +1,94 @@
 {% extends 'layout/web/basic.html' %}
 {% load static %}
-{% block title%}用户注册{% endblock %}
+{% block title %}用户注册{% endblock %}
 
-{% block css%}
-<link rel="stylesheet" href="{% static 'css/web/account.css' %}">
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/web/account.css' %}">
+    <style>
+        .error-msg {
+            color: red;
+            position: absolute;
+            font-size: 13px;
+
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
-<div class="account container">
-    <h1 style="text-align: center">注册</h1>
-    <form method="post">
-        {% csrf_token %}
-        {%for field in form%}
-            {%if field.name == 'code'%}
-                <div class="form-group">
-                    <label for="{{field.id_for_label}}">{{field.label}}</label>
-                    <div class="clearfix">
-                        <div class="col-md-6" style="padding-left:0;">{{field}}</div>
-                        <div class="col-md-6" ><input type="button" value="点击获取验证码" class="btn btn-default"></div>
+    <div class="account container">
+        <h1 style="text-align: center">注册</h1>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                {% if field.name == 'code' %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}<span
+                                class="error-msg"></span></label>
+                        <div class="clearfix">
+                            <div class="col-md-6" style="padding-left:0;">{{ field }}</div>
+                            <div class="col-md-6"><input id="btnSms" type="button" value="点击获取验证码"
+                                                         class="btn btn-default">
+                            </div>
+                        </div>
                     </div>
-                </div>
-            {%else%}
-                <div class="form-group">
-                    <label for="{{field.id_for_label}}">{{field.label}}</label>
-                    {{field}}
-                </div>
-            {%endif%}
-        {%endfor%}
-        <button type="submit" class="btn btn-primary">注 册</button>
-    </form>
-</div>
+                {% else %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        <span class="error-msg"></span>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">注 册</button>
+        </form>
+    </div>
 
 {% endblock %}
 
-{% block js%}
+{% block js %}
+    <script>
+        $(function () {
+            bindClickBtnSms()
+        });
+
+        function bindClickBtnSms() {
+            $('#btnSms').click(function () {
+
+                $('.error-msg').empty();
+                <!--            获取手机号-->
+                var monilePhone = $('#id_telnumber').val();
+                $.ajax({
+                    url: "{% url 'web:send_sms' %}",
+                    type: 'GET',
+                    dataType: "JSON",
+                    data: {
+                        telnumber: monilePhone, tpl: 'register',
+                    },
+                    success: function (res) {
+                        if (res.status) {
+                            $("#btnSms").prop("disabled", true);
+                            $("#btnSms").prop('fount', "#d4d4d4");
+                            var time = 60;
+                            var Intval = setInterval(function () {
+                                time = time - 1;
+                                $("#btnSms").val(time + "秒后重新发送")
+                                if (time < 1) {
+                                    clearInterval(Intval);
+                                    $("#btnSms").prop("disabled", false);
+                                    $("#btnSms").val('点击获取验证码')
+                                }
+                            }, 1000);
+                        } else {
+                            // 显示错误信息
+                            $.each(res.error, function (key, val) {
+                                $("#id_" + key).next().text(val[0]);
+                            })
+                        }
+                    }
+                })
+            });
+        }
+    </script>
 {% endblock %}
 
 
