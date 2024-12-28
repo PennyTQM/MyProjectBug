@@ -1,12 +1,13 @@
-from django.contrib.sites import requests
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, HttpResponse, redirect
-from web.froms.account import RgeisterModelForm, SendSmsForm, LoginSmsFrom, LoginFrom
-from django_redis import get_redis_connection
+
 from utils.captcha import generate_captcha
-from utils.encrypt import md5
-from web.models import UserInfo
+
+from web.models import PricePolicy
+from web.froms.account import RgeisterModelForm, SendSmsForm, LoginSmsFrom, LoginFrom
+
+from web.models import UserInfo, Trancaction
 
 
 def register(request):
@@ -17,6 +18,14 @@ def register(request):
         form = RgeisterModelForm(request.POST)
         if form.is_valid():
             form.save()
+            usr_obj = UserInfo.objects.filter(usr_phone=form.cleaned_data['usr_phone']).first()
+            Trancaction.objects.create(
+                status=2,
+                user=usr_obj,
+                price_policy=PricePolicy.objects.filter(category=1).first(),
+            )
+            request.session["usr_id"] = usr_obj.id
+            request.session.set_expiry(60 * 60 * 24 * 14)
             return JsonResponse({
                 "status": True,
                 "data": "/web/index/"
@@ -67,10 +76,8 @@ def login(request):
                 usr_id = usr_obj.id
                 request.session["usr_id"] = usr_id
                 request.session.set_expiry(60 * 60 * 24 * 14)
-                print("SUCCESS!!!!")
                 return redirect("web:index")
             form.add_error("phone_email", "用户名密码错误")
-            print("form,",form.errors)
         return render(request, "web/login.html", {"form": form}, )
 
 
@@ -83,5 +90,3 @@ def get_code(request):
     img_bytes_arry = io.BytesIO()
     img.save(img_bytes_arry, format="JPEG")
     return HttpResponse(img_bytes_arry.getvalue(), content_type="image/jpeg")
-
-

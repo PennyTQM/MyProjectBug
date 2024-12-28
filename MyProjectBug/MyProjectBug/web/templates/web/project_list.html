@@ -1,0 +1,120 @@
+{% extends 'layout/web/manage.html' %}
+{% load static %}
+{% block title %}首页{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/web/account.css' %}">
+    <link rel="stylesheet" href="{% static 'plugin/web/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'plugin/web/font-awesome/css/font-awesome.min.css' %}">
+    <style>
+        .error-msg {
+            color: red;
+            position: absolute;
+            font-size: 13px;
+
+        }
+        .project {
+            margin-top: 10px;
+        }
+
+        .circle {
+            margin: 8px 8px;
+            padding: 10px 10px 10px 10px;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex inline;
+            justify-content: center;
+            align-items: center;
+
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid project" >
+    <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal"><i class="fa fa-plus-circle" aria-hidden=true></i> 新建项目 </a>
+    </div>
+{#    <button type="button" id="add_project" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">#}
+{#        Launch demo modal#}
+{#    </button>#}
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">添加项目</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" id="myForm">
+                            {% csrf_token %}
+                            {% for field in form %}
+                                {% if field.name == "color" %}
+                                    <div class="form-group">
+                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+
+{#                                        {% for item in field %}#}
+{#                                            <span class="circle" style="background-color: {{ item.choice_label }}"#}
+{#                                                  id="{{ item.id_for_label }}" onclick="choice_col(this)" ></span>#}
+{#                                        {% endfor %}#}
+                                        {{ field }}
+                                        <span class="error-msg">{{ field.errors.0 }}</span>
+                                    </div>
+                                {% else %}
+                                    <div class="form-group">
+                                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                        {{ field }}
+                                    <span class="error-msg">{{ field.errors.0 }}</span>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                            <div class="row">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+                        <button type="button" class="btn btn-primary" id="btnSubmit">确 定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+
+        $(function () {
+            bindSubmit()
+        })
+
+        function bindSubmit() {
+            $("#btnSubmit").click(function () {
+
+                $.ajax({
+                    url: "{% url 'web:project_list' %}",
+                    type:"POST",
+                    dataType: "JSON",
+                    data: $("#myForm").serialize(),
+                    success: function (res) {
+                        if (res.status) {
+                            console.log("创建成功关闭弹窗")
+                        } else {
+                            console.log("lalalal")
+                            $.each(res.error, function (key, val) {
+                                $("#id_"+key).next().text(val[0])
+                            })
+                        }
+                    }
+                })
+            })
+        }
+
+
+    </script>
+{% endblock %}

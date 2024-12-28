@@ -147,6 +147,17 @@ CACHES = {
 # SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 # SESSION_CACHE_ALIAS = 'default'
 
+############ 登录：白名单 ###########
+
+WHITE_REGEX_URL_LIST = [
+    "/web/register/",
+    "/web/login/",
+    "/web/send/sms/",
+    "/web/login/sms",
+    "/web/getcode/",
+    "/web/index/",
+]
+
 try:
     from local_settings import *
 

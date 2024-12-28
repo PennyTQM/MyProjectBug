@@ -2,10 +2,20 @@
 {% load static %}
 {% block title %}首页{% endblock %}
 
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/web/account.css' %}">
+    <link rel="stylesheet" href="{% static 'plugin/web/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'plugin/web/font-awesome/css/font-awesome.min.css' %}">
 
+{% endblock %}
 
 {% block content %}
-   <div>
-    <img src="{% static 'img/web/index1.png' %}" width="100%">
-   </div>
+    <div>
+        <img src="{% static 'img/web/index1.png' %}" width="100%">
+    </div>
+    <br>
+
+{% endblock %}
+
+{% block js %}
 {% endblock %}
